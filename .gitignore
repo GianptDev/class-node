@@ -1,0 +1,19 @@
+
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+
+# Compiled
+*.exe
+*.class
+*.jar
+*.obj
+
+
+# General
+.vscode/
+.ignore/
+
