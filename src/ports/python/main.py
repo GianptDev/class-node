@@ -12,13 +12,15 @@ from nodeclass.chain import *
 
 def main() -> None:
 
-	n = ChainNode()
+	n = ChainNode("start")
 
-	n.add_child(ChainNode())
-	n.child.add_child(ChainNode())
-	n.child.child.add_child(ChainNode())
-	n.child.child.child.add_child(ChainNode())
-	n.child.child.child.child.add_child(ChainNode())
+	n.get_end().add_child(ChainNode())
+	n.get_end().add_child(ChainNode())
+	n.get_end().add_child(ChainNode("middle"))
+	n.get_end().add_child(ChainNode())
+	n.get_end().add_child(ChainNode())
+	n.get_end().add_child(ChainNode("end"))
+	print(n.get_end())
 
 	return
 

@@ -23,10 +23,15 @@ class ChainNode():
 	# -------------------------------------------------
 	
 
-	def __init__(self) -> None:
+	def __init__(self, name: str = "Node") -> None:
 		self._parent: ChainNode = None
 		self._child: ChainNode = None
+		self._name: str = name
 
+
+	def __repr__(self) -> "str":
+		return self.repr()
+	
 
 	# -------------------------------------------------
 
@@ -79,7 +84,7 @@ class ChainNode():
 		"""
 
 		if (node == None):
-			raise Exception("Tried to add None as a child.")
+			raise Exception("Tried to add 'None' as a child.")
 
 		if (self._child != None):
 			raise Exception("Another child is already connected to this Node.")
@@ -111,6 +116,8 @@ class ChainNode():
 	def remove_child(self) -> None:
 		"""
 		Disconnect the current Node from his child.
+
+		- Since: 1.0
 		"""
 
 		if (self._parent != None):
@@ -127,9 +134,34 @@ class ChainNode():
 	# -------------------------------------------------
 
 
+	def get_index(self) -> "int":
+		"""
+		Get the index position inside the chain from the start to the current position.
+
+		Returns:
+			Integer of the current position, it will start from 0.
+		
+		- Since: 1.0
+		"""
+
+		index: int = 0
+		current: ChainNode = self
+
+		while(current._parent != None):
+			index += 1
+			current = current._parent
+		
+		return index
+
+
 	def get_start(self) -> "ChainNode":
 		"""
 		The the first Node of the whole chain structure.
+
+		Returns:
+			The current Node or the first node of the chain.
+		
+		- Since: 1.0
 		"""
 
 		node: ChainNode = self
@@ -143,6 +175,11 @@ class ChainNode():
 	def get_end(self) -> "ChainNode":
 		"""
 		The the last Node of the whole chain structure.
+
+		Returns:
+			The current Node or the last node of the chain.
+		
+		- Since: 1.0
 		"""
 
 		node: ChainNode = self
@@ -153,31 +190,80 @@ class ChainNode():
 		return node
 
 	
-	def get_next(self, skip: "int" = 0) -> Union["ChainNode", None]:
+	def get_chain(self, index: "int") -> Union["ChainNode", None]:
 		"""
-		Get a child Node from the current Node or from another child.
+		Get a node by skipping index amount going backwards or forwards from the current Node.
+
+		Returns:
+			The found node after the amount of steps or None if the index position does not exist and is outside the chain.
+
+		- Since: 1.0
 		"""
 
-		pass
+		node: ChainNode = self
+
+		if (index >= 0):
+
+			for n in range(index):
+
+				if (node._child != None):
+					node = node._child
+				else:
+					return None
+		else:
+			index = -index
+
+			for n in range(index):
+
+				if (node._parent != None):
+					node = node._parent
+				else:
+					return None
+
+		return node
 	
 
-	def get_previus(self, skip: "int" = 0) -> Union["ChainNode", None]:
-		"""
-		Get a parent Node from the current Node or from another parent.
-		"""
-		
-		pass
-	
-
-	def get_path(self, inverse: "bool" = False) -> list["ChainNode"]:
+	def get_path(self, to_end: "bool" = False) -> tuple["ChainNode"]:
 		"""
 		Will get all the nodes between the current Node and the fist Node, or from the current Node to the last Node.
 
 		Params:
-			`inverse` (bool): If enabled will get the path to the last Node.
+			`to_end` (bool): If enabled will get the path to the last Node.
+		
+		- Since: 1.0
 		"""
 
-		pass
+		path: tuple[ChainNode] = ()
+		current: ChainNode = None
+
+		if (to_end == False):
+			current = self._parent
+			
+			while(current != None):
+				path = (*path, current)
+				current = current._parent
+		
+		else:
+			current = self._child
+			
+			while(current != None):
+				path = (*path, current)
+				current = current._child
+
+		return path
+
+
+	def repr(self) -> "str":
+		"""
+		Convert the current node into a string.
+
+		Returns:
+			The string with a rappresentation of the current Node.
+		
+		- Since: 1.0
+		"""
+
+		return "<{node_class}:{node_index}>".format(node_class = type(self).__name__, node_index = self.get_index())
 
 
 # -------------------------------------------------
