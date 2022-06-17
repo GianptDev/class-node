@@ -59,7 +59,7 @@ class TreeNode():
 
 	When a connection happen the child, who is being connected, get the reference of the parent, who started the connection, and the parent get a reference of the child.
 
-	Inside a connection group is possible for any object to get any other object by travelling with a path structure.
+	Inside a connection group is possible for any object to get any other object by travelling with a path or index structure.
 
 	- Since: 1.0
 	"""

@@ -18,6 +18,15 @@ from typing import Union
 
 
 class ChainNode():
+	"""
+	The Node class object, it allow to connect and be connected with other nodes.
+
+	When a connection happen the child, who is being connected, get the reference of the parent, who started the connection, and the parent get a reference of the child.
+
+	Inside a connection group is possible for any object to get any other object by travelling with a path or index structure.
+
+	- Since: 1.0
+	"""
 
 
 	# -------------------------------------------------
@@ -33,6 +42,12 @@ class ChainNode():
 		return self.repr()
 	
 
+	def __iter__(self) -> "ChainNode":
+
+		for child in self.get_path(to_end = True):
+			yield child
+
+
 	# -------------------------------------------------
 
 
@@ -44,9 +59,30 @@ class ChainNode():
 	@property
 	def child(self) -> "ChainNode":
 		return self._child
+	
+
+	@property
+	def name(self) -> "str":
+		return self._name
+	
+
+	@name.setter
+	def name(self, name: "str") -> None:
+		self.rename(name)
 
 
 	# -------------------------------------------------
+
+
+	def _free(self) -> None:
+		"""
+		Executed before the current Node remove all references to itself to any other Node is connected to it.
+
+		- Virtual
+		- Since: 1.0
+		"""
+
+		pass
 
 
 	def _parent_changed(self) -> None:
@@ -74,6 +110,52 @@ class ChainNode():
 	# -------------------------------------------------
 
 
+	def free(self) -> None:
+		"""
+		Will help you to remove all references of the current Node from any connection.
+
+		Here the order of what will happen when executed:
+		1. Will first execute the same method to all childrens, make sure to remove them before executing this method if you wish to keep them.
+		2. Will execute the `_free` virtual.
+		3. Will disconnect from the parent.
+		
+		After that you can destroy the object with no problem.
+		- Since: 1.0
+		"""
+		
+		for c in self.get_path(to_end = True):
+			c.free()
+
+		self._free()
+
+		if (self._parent != None):
+			self._parent.remove_child()
+
+
+	def rename(self, name: "str") -> None:
+		new_name: str = name
+		count: int = 0
+
+		while(True):
+			found: bool = False
+
+			for n in self.get_start().get_path(to_end = True):
+
+				if ((n != self) and (n._name == new_name)):
+					found = True
+					break
+			
+			if (found == True):
+				count += 1
+				new_name = f"{name}{count}"
+			else:
+				name = new_name
+				break
+
+
+		self._name = name
+
+
 	def add_child(self, node: "ChainNode") -> None:
 		"""
 		Connect node as a child of the current Node.
@@ -91,6 +173,7 @@ class ChainNode():
 		
 		node._parent = self
 		self._child = node
+		node.rename(node._name)	# Make sure to update name.
 		node._parent_changed()
 		self._child_changed()
 
@@ -102,7 +185,7 @@ class ChainNode():
 		- Since: 1.0
 		"""
 		
-		if (self._parent != None):
+		if (self._parent == None):
 			raise Exception("The current Node is not connected to a parent.")
 		
 		parent = self._parent
@@ -120,7 +203,7 @@ class ChainNode():
 		- Since: 1.0
 		"""
 
-		if (self._parent != None):
+		if (self._child == None):
 			raise Exception("The current Node is not connected to a child.")
 		
 		child = self._child
@@ -190,7 +273,7 @@ class ChainNode():
 		return node
 
 	
-	def get_chain(self, index: "int") -> Union["ChainNode", None]:
+	def get_chain(self, index: Union["int", "str"]) -> Union["ChainNode", None]:
 		"""
 		Get a node by skipping index amount going backwards or forwards from the current Node.
 
@@ -202,23 +285,38 @@ class ChainNode():
 
 		node: ChainNode = self
 
-		if (index >= 0):
+		if (isinstance(index, int) == True):
 
-			for n in range(index):
+			if (index >= 0):
 
-				if (node._child != None):
-					node = node._child
-				else:
-					return None
+				for n in range(index):
+
+					if (node._child != None):
+						node = node._child
+					else:
+						return None
+			else:
+				index = -index
+
+				for n in range(index):
+
+					if (node._parent != None):
+						node = node._parent
+					else:
+						return None
+		
+		elif (isinstance(index, str) == True):
+
+			for n in self.get_start().get_path(to_end = True):
+
+				if (n._name == index):
+					node = n
+					break
+
 		else:
-			index = -index
-
-			for n in range(index):
-
-				if (node._parent != None):
-					node = node._parent
-				else:
-					return None
+			raise Exception("Invalid type '{type}' used in index.".format(
+				type = type(index).__name__
+			))
 
 		return node
 	
@@ -260,10 +358,35 @@ class ChainNode():
 		Returns:
 			The string with a rappresentation of the current Node.
 		
-		- Since: 1.0
+		- since: 1.0
 		"""
 
-		return "<{node_class}:{node_index}>".format(node_class = type(self).__name__, node_index = self.get_index())
+		return "<{node_class}:{node_index}:'{node_name}'>".format(
+			node_class = type(self).__name__,
+			node_index = self.get_index(),
+			node_name = self._name
+		)
+	
+
+	def repr_chain(self) -> "str":
+		"""
+		Convert the current chain structure into a fancy string.
+
+		Returns:
+			The string with a rappresentation of the chain.
+
+		- since: 1.0
+		"""
+
+		string = self.repr()
+
+		for n in self.get_path(to_end = True):
+			string = "%s\n\t%s" % (
+				string,
+				n.repr()
+			)
+		
+		return string
 
 
 # -------------------------------------------------
