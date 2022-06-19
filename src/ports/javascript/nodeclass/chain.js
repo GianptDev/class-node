@@ -76,9 +76,12 @@ export class ChainNode
 	// ---------------------------------------------------------
 
 
+	/**
+	 * @since 1.0
+	 */
 	free()
 	{
-		for (let child of [...this.childrens])
+		for (let child of this.get_path(true))
 		{
 			child.free();
 		}
@@ -88,6 +91,104 @@ export class ChainNode
 		if (this.parent != null) {
 			this.parent.remove_child();
 		}
+	}
+
+
+	/**
+	 * 
+	 * @param {string} name 
+	 * @since 1.0
+	 */
+	rename(name)
+	{
+		let new_name = name;
+		let count = 0;
+
+		while(true)
+		{
+			let found = false;
+
+			for (let n of this.get_start().get_path(true))
+			{
+				if ((n != this) && (n.name == new_name)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (found == true) {
+				++count;
+				new_name = `${name}${count}`;
+			} else {
+				name = new_name;
+				break;
+			}
+		}
+
+		this.name = name;
+	}
+
+
+	/**
+	 * Connect node as a child of the current Node.
+	 * 
+	 * If a child already exist, an exception is raised.
+	 * 
+	 * @param {ChainNode} node 
+	 */
+	add_child(node)
+	{
+		if ((node instanceof ChainNode) == false) {
+			throw `Tried to add type '${typeof node}' as a child.`;
+		}
+
+		if (this.child != null) {
+			throw "Another child is already connected to this Node.";
+		}
+
+		node.parent = this;
+		this.child = node;
+		node.rename(node.name);
+		node._parent_changed();
+		this._child_changed();
+	}
+
+
+	/**
+	 * @since 1.0
+	 */
+	remove_parent()
+	{
+		if (this.parent == null) {
+			throw "The current Node is not connected to a parent.";
+		}
+
+		let parent = this.parent;
+
+		this.parent = null;
+		parent.child = null;
+		this._parent_changed();
+		parent._child_changed();
+	}
+
+
+	/**
+	 * Disconnect the current Node from his child.
+	 * 
+	 * @since 1.0
+	 */
+	remove_child()
+	{
+		if (this.child == null) {
+			throw "The current Node is not connected to a child.";
+		}
+
+		let child = this.child;
+
+		this.child = null;
+		child.parent = null;
+		this._child_changed();
+		child._parent_changed();
 	}
 
 
@@ -122,7 +223,7 @@ export class ChainNode
 	 */
 	get_start()
 	{
-		let node = self;
+		let node = this;
 
 		while(node.parent != null) {
 			node = node.parent;
@@ -140,7 +241,7 @@ export class ChainNode
 	 */
 	get_end()
 	{
-		let node = self;
+		let node = this;
 
 		while(node.child != null) {
 			node = node.child;
@@ -226,12 +327,41 @@ export class ChainNode
 			current = this.child;
 
 			while(current != null) {
-				path.splice(index, 0, current);
+				path.splice(path.length, 0, current);
 				current = current.child;
 			}
 		}
 
 		return path;
+	}
+
+
+	/**
+	 * Convert the current node into a string.
+	 * 
+	 * @returns {string}
+	 */
+	repr()
+	{
+		return `<${this.constructor.name}:${this.get_index()}:'${this.name}'>`;
+	}
+
+
+	/**
+	 * Convert the current chain structure into a fancy string.
+	 * 
+	 * @returns {string}
+	 */
+	repr_chain()
+	{
+		let string = this.repr();
+
+		for (let n of this.get_path(true))
+		{
+			string += `\n\t${n.repr()}`;
+		}
+
+		return string;
 	}
 
 

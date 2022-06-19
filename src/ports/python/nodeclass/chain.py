@@ -183,8 +183,10 @@ class ChainNode():
 		- Since: 1.0
 		"""
 
-		if (node == None):
-			raise Exception("Tried to add 'None' as a child.")
+		if (isinstance(node, ChainNode) == False):
+			raise Exception("Tried to add '{type_name}' as a child.".format(
+				type_name = type(node).__name__
+			))
 
 		if (self._child != None):
 			raise Exception("Another child is already connected to this Node.")

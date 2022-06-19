@@ -4,7 +4,7 @@
 
 
 import {TreeNode} from "./nodeclass/tree.js";
-import {ChainNode} from "./nodeclass/chain.js";
+import {chain} from "./nodeclass/nodeclass.js";
 
 
 // ---------------------------------------------------------
@@ -14,7 +14,17 @@ function main()
 {
 
 
-	let n = new ChainNode();
+	let n = new chain.ChainNode("root");
+	n.get_end().add_child(new chain.ChainNode());
+	n.get_end().add_child(new chain.ChainNode());
+	n.get_end().add_child(new chain.ChainNode());
+	n.get_end().add_child(new chain.ChainNode());
+	n.get_end().add_child(new chain.ChainNode());
+	n.get_end().add_child(new chain.ChainNode());
+
+	console.log(n.repr_chain());
+	n.free();
+	console.log(n.repr_chain());
 
 	return;
 
