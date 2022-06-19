@@ -20,6 +20,7 @@ def main() -> None:
 	n.get_end().add_child(ChainNode())
 	n.get_end().add_child(ChainNode())
 	n.get_end().add_child(ChainNode("end"))
+
 	print(n.repr_chain())
 
 	return

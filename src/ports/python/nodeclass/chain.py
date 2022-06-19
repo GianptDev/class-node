@@ -53,16 +53,34 @@ class ChainNode():
 
 	@property
 	def parent(self) -> "ChainNode":
+		"""
+		The previus node wich the current node has been connected to.
+
+		- since: 1.0
+		"""
+
 		return self._parent
 	
 
 	@property
 	def child(self) -> "ChainNode":
+		"""
+		The next node with has been connected to the current node.
+
+		- since: 1.0
+		"""
+
 		return self._child
 	
 
 	@property
 	def name(self) -> "str":
+		"""
+		Unique string name identifier of the current node.
+
+		- since: 1.0
+		"""
+
 		return self._name
 	
 
@@ -275,10 +293,13 @@ class ChainNode():
 	
 	def get_chain(self, index: Union["int", "str"]) -> Union["ChainNode", None]:
 		"""
-		Get a node by skipping index amount going backwards or forwards from the current Node.
+		Get a node relative from the current node.
 
-		Returns:
-			The found node after the amount of steps or None if the index position does not exist and is outside the chain.
+		If index is a positive number the function return a node forward from the current node.
+		
+		If index is a negative number the function return a node forward from the current node.
+
+		If index is a string the function return the only node he can find in the whole chain with that name.
 
 		- Since: 1.0
 		"""
