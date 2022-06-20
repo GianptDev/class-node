@@ -150,6 +150,9 @@ class ChainNode():
 			self._parent.remove_child()
 
 
+	# TODO:
+	# Rename ignore the first element (get_start) becaus is ignored in get_path.
+	# All ports have same problem.
 	def rename(self, name: "str") -> None:
 		new_name: str = name
 		count: int = 0

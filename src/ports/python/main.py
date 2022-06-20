@@ -12,7 +12,7 @@ from nodeclass.chain import *
 
 def main() -> None:
 
-	n = ChainNode("start")
+	n = ChainNode()
 
 	n.get_end().add_child(ChainNode())
 	n.get_end().add_child(ChainNode())

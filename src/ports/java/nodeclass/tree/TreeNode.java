@@ -87,9 +87,7 @@ public class TreeNode
 
 	public TreeNode()
 	{
-		this.parent = null;
-		this.childrens = new ArrayList<TreeNode>();
-		this.name = "Node";
+		this("Node");
 	}
 
 
@@ -117,15 +115,6 @@ public class TreeNode
 	 * @virtual
 	 */
 	private void _free() {}
-
-
-	/**
-	 * Executed after the current Node has been manually renamed with {@code rename} or automatically to make his name unique.
-	 * 
-	 * @since 1.0
-	 * @virtual
-	 */
-	private void _renamed() {}
 
 
 	/**
@@ -229,7 +218,6 @@ public class TreeNode
 		}
 
 		this.name = name;
-		this._renamed();
 	}
 	
 	
@@ -279,6 +267,7 @@ public class TreeNode
 	 * @param node The new node to parent.
 	 * 
 	 * @since 1.0
+	 * @NonNull
 	 */
 	public final void add_child(TreeNode node)
 	{
@@ -295,6 +284,7 @@ public class TreeNode
 	 * @param index	Optional index of his position.
 	 * 
 	 * @since 1.0
+	 * @NonNull
 	 */
 	public final void add_child(TreeNode node, int index)
 	{
@@ -342,6 +332,7 @@ public class TreeNode
 	 * @param child The child to remove.
 	 * 
 	 * @since 1.0
+	 * @NonNull
 	 */
 	public final void remove_child(TreeNode child)
 	{
@@ -370,6 +361,7 @@ public class TreeNode
 	 * @param index The new index position.
 	 * 
 	 * @since 1.0
+	 * @NonNull
 	 */
 	public final void move_child(TreeNode node, int index)
 	{
