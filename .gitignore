@@ -1,19 +1,27 @@
 
 
-# Python
-*.pyc
-*.pyo
-__pycache__/
-
-
-# Compiled
-*.exe
-*.class
-*.jar
-*.obj
-
-
 # General
 .vscode/
 .ignore/
+
+
+# Builds
+packages/release/
+
+
+# Python
+src/ports/python/**/*.pyc
+src/ports/python/**/*.pyo
+src/ports/python/**/__pycache__/
+
+
+# Java
+src/ports/java/**/*.class
+src/ports/java/**/*.jar
+
+
+# D
+src/ports/d/**/*.exe
+src/ports/d/**/*.obj
+src/ports/d/**/*.o
 
